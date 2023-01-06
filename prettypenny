@@ -1,0 +1,71 @@
+import requests
+import re
+import smtplib
+
+# a dictionary to store the users and their passwords
+users = {}
+
+def sign_up():
+  # prompt the user to enter their email and password
+  print('Enter your email:')
+  email = input()
+  print('Enter your password:')
+  password = input()
+  
+  # add the email and password to the users dictionary
+  users[email] = password
+
+def log_in():
+  # prompt the user to enter their email and password
+  print('Enter your email:')
+  email = input()
+  print('Enter your password:')
+  password = input()
+  
+  # check if the email and password are correct
+  if email in users and users[email] == password:
+    return True
+  else:
+    return False
+
+def check_price(url):
+  # fetch the page
+  headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36'}
+  page = requests.get(url, headers=headers)
+
+  # extract the price
+  price = re.search(r'\$\d+\.\d+', page.text).group()
+  
+  return float(price[1:])
+
+def send_email(subject, body):
+  # set up the SMTP server
+  server = smtplib.SMTP('smtp.gmail.com', 587)
+  server.ehlo()
+  server.starttls()
+  server.ehlo()
+  
+  # login to the server
+  email = 'your_email@example.com'
+  password = 'your_email_password'
+  server.login(email, password)
+  
+  # send the email
+  to = 'your_email@example.com'
+  msg = f"Subject: {subject}\n\n{body}"
+  server.sendmail(email, to, msg)
+  
+  # close the server
+  server.quit()
+
+# specify the URLs of the products you want to check
+sephora_url = 'https://www.sephora.com/product/product-name-P123456'
+ulta_url = 'https://www.ulta.com/product/product-name-P123456'
+mac_cosmetics_url = 'https://www.maccosmetics.com/product/product-name-P123456'
+urban_decay_cosmetics_url = 'https://www.urbandecay.com/product/product-name-P123456'
+macys_beauty_url = 'https://www.macys.com/product/product-name-P123456'
+nordstrom_cosmetics_url = 'https://www.nordstrom.com/product/product-name-P123456'
+
+# check the prices of the products
+sephora_price = check_price(sephora_url)
+ulta_price = check_price(ulta_
